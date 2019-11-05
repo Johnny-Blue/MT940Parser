@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using programmersdigest.MT940Parser;
-using programmersdigest.MT940Parser.Parsing;
-using System;
-using System.IO;
-
-namespace MT940ParserTests
+﻿namespace MT940ParserTests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using programmersdigest.MT940Parser.Model;
+    using programmersdigest.MT940Parser.Parsing;
+    using System;
+    using System.IO;
+
     [TestClass]
     public class BalanceParserTests
     {

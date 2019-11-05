@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-
-namespace programmersdigest.MT940Parser.Parsing
+﻿namespace programmersdigest.MT940Parser.Parsing
 {
+    using programmersdigest.MT940Parser.Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+
     public class StatementLineParser
     {
         private static readonly HashSet<string> _validTransactionTypes = new HashSet<string> { "F", "N", "S" };

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-
-namespace programmersdigest.MT940Parser.Parsing
+﻿namespace programmersdigest.MT940Parser.Parsing
 {
+    using programmersdigest.MT940Parser.Model;
+    using System;
+    using System.Globalization;
+    using System.IO;
+
     public class BalanceParser
     {
         private StringReader _reader;

@@ -1,45 +1,47 @@
-﻿using System;
-using programmersdigest.MT940Parser;
-using System.Linq;
-
-namespace ParserPOC
+﻿namespace ParserPOC
 {
-    class Program
+    using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+    using MT940Data.Entities;
+    using ParserPOC.Services;
+    using programmersdigest.MT940Parser.Parsing;
+    using programmersdigest.MT940Parser.Store;
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+
+    public static class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            string mt940File = @"D:\work\test\MT940\MT940Parser\Resources\abnamro.txt";
-
-            Parser p = new Parser(mt940File);
-
-            var stmt = p.Parse().Select(r => r);
-
-            foreach (var item in stmt)
-            {
-                Console.WriteLine($"AccountIdentification: {item.AccountIdentification}");
-                Console.WriteLine($"OpeningBalance: {item.OpeningBalance}");
-                Console.WriteLine($"ClosingAvailableBalance: {item.ClosingAvailableBalance}");
-                Console.WriteLine($"ClosingBalance: {item.ClosingBalance}");
-                Console.WriteLine("=========== ForwardAvailableBalances:");
-
-                foreach (var fab in item.ForwardAvailableBalances)
+            var Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(AppDomain.CurrentDomain.BaseDirectory + "\\appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+            var builder = new HostBuilder()
+                .ConfigureServices((hostContext, services) =>
                 {
-                    Console.WriteLine(fab.ToString());
-                }
-                Console.WriteLine("END ForwardAvailableBalances.");
-
-                Console.WriteLine($"InformationToOwner: {item.InformationToOwner}");
-                Console.WriteLine($"RelatedReference: {item.RelatedReference}");
-                Console.WriteLine($"SequenceNumber: {item.SequenceNumber}");
-                Console.WriteLine($"StatementNumber: {item.StatementNumber}");
-                Console.WriteLine($"TransactionReferenceNumber: {item.TransactionReferenceNumber}");
-                Console.WriteLine("=========== Lines:");
-                foreach (var line in item.Lines)
-                {
-                    Console.WriteLine(line.ToString());
-                }
-                Console.WriteLine("=========== END Lines:");
-            }
+                    services.AddEntityFrameworkSqlServer();
+                    services.AddDbContextPool<AbnAmroNL>(options => options
+                        .UseSqlServer(Configuration.GetConnectionString("AbnAmroNL")))
+                    .AddLogging(logbuilder =>
+                    {
+                        logbuilder.ClearProviders().AddConsole();
+                    })
+                    .AddScoped<IParser, Parser>()
+                    .AddScoped<IStoreMT940, StoreMT940>()
+                    .AddScoped<IMT940Service, MT940Service>().Configure<MT940ServiceConfig>(Configuration.GetSection("MT940Service"))
+                    .AddAutoMapper(typeof(MT940Data.AutoMapperProfile));
+                })
+                .UseConsoleLifetime()
+                .Build();
+            var service = builder.Services.GetService<IMT940Service>();
+            await service.ExecuteAsync().ConfigureAwait(false);
         }
     }
 }

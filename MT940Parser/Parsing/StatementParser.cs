@@ -1,9 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-
-namespace programmersdigest.MT940Parser.Parsing
+﻿namespace programmersdigest.MT940Parser.Parsing
 {
+    using programmersdigest.MT940Parser.Model;
+    using System;
+    using System.IO;
+    using System.Linq;
+
     public class StatementParser
     {
         private StreamReader _reader;
@@ -213,6 +214,9 @@ namespace programmersdigest.MT940Parser.Parsing
         private void ReadClosingBalance(ref Statement statement, BalanceType balanceType)
         {
             var value = _reader.ReadTo(out var nextKey, "\r\n:64:", "\r\n:65:", "\r\n:86:", "\r\n-");
+            // There mightnot be a closing balance; After 62F I had EOF
+            if (_reader.EndOfStream) return;
+
             switch (nextKey)
             {
                 case "\r\n:64:":
@@ -259,6 +263,10 @@ namespace programmersdigest.MT940Parser.Parsing
         private void ReadForwardAvailableBalance(ref Statement statement)
         {
             var value = _reader.ReadTo(out var nextKey, "\r\n:65:", "\r\n:86:", "\r\n-");
+
+            // Statement can end w/o a closing available balance 
+            if (_reader.EndOfStream) return;
+
             if (nextKey == null)
             {
                 throw new InvalidDataException("The statement data ended unexpectedly. Expected field :65: to be followed by :65:, :86: or the end of the statement");

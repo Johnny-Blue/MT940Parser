@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
-
-namespace programmersdigest.MT940Parser
+﻿namespace programmersdigest.MT940Parser.Model
 {
+    using System;
+    using System.Text;
+
     public class Balance
     {
         public BalanceType Type { get; internal set; }

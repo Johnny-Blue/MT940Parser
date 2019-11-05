@@ -1,21 +1,28 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿
 
 namespace programmersdigest.MT940Parser.Parsing
 {
+    using programmersdigest.MT940Parser.Model;
+    using System;
+    using System.Globalization;
+    using System.IO;
+    using System.Resources;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     internal class AdditionalInfoParser
     {
         private StringReader _reader;
         private char _separator;
         private string _lastRemittanceIdentifier;
+        private ResourceManager _rm = new ResourceManager(typeof(AdditionalInfoParserResx));
+        private readonly CultureInfo _cultureInfo = CultureInfo.DefaultThreadCurrentCulture;
 
         public Information ParseInformation(string value)
         {
             if (value == null)
             {
-                throw new ArgumentNullException(nameof(value), "Value may not be null");
+                throw new ArgumentNullException(nameof(value), _rm.GetString("nullValue", _cultureInfo));
             }
 
             _reader = new StringReader(value);
@@ -38,8 +45,9 @@ namespace programmersdigest.MT940Parser.Parsing
                 // Cannot read this format at this time.
                 ReadUnstructuredData(ref information);
             }
-            else if (Regex.IsMatch(value, "[0-9]{3}.*"))
+            else if (Regex.IsMatch(value, "^[0-9]{3}.*"))
             {
+                // Changed the regex to match the beginning of the string only
                 // Structured format with separators in the form ?12...
                 ReadTransactionCode(ref information);
             }
@@ -55,7 +63,7 @@ namespace programmersdigest.MT940Parser.Parsing
             var value = _reader.Read(3);
             if (value.Length < 3)
             {
-                throw new InvalidDataException($"Expected \"Transaction Code\" with a length of three numeric characters.");
+                throw new InvalidDataException(_rm.GetString("transactionCode", _cultureInfo));
             }
 
             information.TransactionCode = int.Parse(value);
@@ -86,7 +94,7 @@ namespace programmersdigest.MT940Parser.Parsing
             var value = _reader.Read(1);
             if (value.Length < 1)
             {
-                throw new InvalidDataException("Unexpected end of statement. Expected \"Separator\"");
+                throw new InvalidDataException(_rm.GetString("separator", _cultureInfo));
             }
 
             _separator = value[0];      // Some sources say this should always be '?'. Others do however use '@' or other characters.
@@ -104,7 +112,7 @@ namespace programmersdigest.MT940Parser.Parsing
 
             if (value[0] != _separator)
             {
-                throw new InvalidDataException($"Unexpected data \"{value}\". Expected separator \"{_separator}\"");
+                throw new InvalidDataException($"{_rm.GetString("unexpectedData", _cultureInfo)} \"{value}\". {_rm.GetString("expectedSeparator", _cultureInfo)} \"{_separator}\"");
             }
 
             DetectFieldCode(ref information);
@@ -115,7 +123,7 @@ namespace programmersdigest.MT940Parser.Parsing
             var value = _reader.Read(2);
             if (value.Length < 2)
             {
-                throw new InvalidDataException("Unexpected end of statement. Expected \"Field Code\"");
+                throw new InvalidDataException(_rm.GetString("fieldCode", _cultureInfo));
             }
 
             switch (value)

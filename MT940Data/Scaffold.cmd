@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Server=.;Database=AbnAmroNL;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Entities -f -d -c AbnAmroNL --schema mt940

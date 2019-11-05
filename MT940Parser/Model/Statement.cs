@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace programmersdigest.MT940Parser
+﻿namespace programmersdigest.MT940Parser.Model
 {
+    using System.Collections.Generic;
+
     public class Statement
     {
         public string TransactionReferenceNumber { get; internal set; }
@@ -15,5 +15,7 @@ namespace programmersdigest.MT940Parser
         public Information InformationToOwner { get; internal set; }
         public List<StatementLine> Lines { get; } = new List<StatementLine>();
         public List<Balance> ForwardAvailableBalances { get; } = new List<Balance>();
+        public string FileName { get; set; }
+        public int? FileId { get; set; }
     }
 }

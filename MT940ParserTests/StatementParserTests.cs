@@ -1,12 +1,12 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using programmersdigest.MT940Parser;
-using programmersdigest.MT940Parser.Parsing;
-using System;
-using System.IO;
-using System.Text;
-
 namespace MT940ParserTests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using programmersdigest.MT940Parser.Model;
+    using programmersdigest.MT940Parser.Parsing;
+    using System;
+    using System.IO;
+    using System.Text;
+
     [TestClass]
     public class StatementParserTests
     {

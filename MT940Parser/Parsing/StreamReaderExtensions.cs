@@ -17,7 +17,7 @@ namespace programmersdigest.MT940Parser.Parsing
             {
                 throw new ArgumentNullException(nameof(needle));
             }
-            if (needle == "")
+            if (string.IsNullOrEmpty(needle))
             {
                 throw new ArgumentOutOfRangeException(nameof(needle));
             }
