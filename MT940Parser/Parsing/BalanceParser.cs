@@ -4,10 +4,13 @@
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Resources;
 
     public class BalanceParser
     {
         private StringReader _reader;
+        private ResourceManager _rm = new ResourceManager(typeof(BalanceParserResx));
+        private readonly CultureInfo _cultureInfo = CultureInfo.DefaultThreadCurrentCulture;
 
         public Balance ReadBalance(string buffer, BalanceType type)
         {
@@ -28,7 +31,7 @@
             var value = _reader.Read(1);
             if (value.Length < 1)
             {
-                throw new InvalidDataException("The balance data ended unexpectedly. Expected credit debit field.");
+                throw new InvalidDataException(_rm.GetString("endUnexpectedlycrdb", _cultureInfo));
             }
 
             switch (value)
@@ -40,7 +43,7 @@
                     balance.Mark = DebitCreditMark.Debit;
                     break;
                 default:
-                    throw new FormatException($"Debit/Credit Mark must be 'C' or 'D'. Actual: {value}");
+                    throw new FormatException($"{_rm.GetString("dc", _cultureInfo)} {value}");
             }
 
             ReadStatementDate(ref balance);
@@ -51,7 +54,7 @@
             var value = _reader.ReadWhile(char.IsDigit, 6);
             if (value.Length < 6)
             {
-                throw new InvalidDataException("The balance data ended unexpectedly. Expected value Date with a length of six characters.");
+                throw new InvalidDataException(_rm.GetString("endUnexpectedlyDate", _cultureInfo));
             }
 
             balance.Date = DateParser.Parse(value);
@@ -64,7 +67,7 @@
             var value = _reader.ReadWhile(c => char.IsLetter(c) && char.IsUpper(c), 3);
             if (value.Length < 3)
             {
-                throw new InvalidDataException("The balance data ended unexpectedly. Expected value Currency with three uppercase letters.");
+                throw new InvalidDataException(_rm.GetString("endUnexpectedlyCCY", _cultureInfo));
             }
 
             balance.Currency = value;
@@ -77,12 +80,12 @@
             var value = _reader.Read(15);
             if (value.Length <= 0)
             {
-                throw new InvalidDataException("The balance data ended unexpectedly. Expected value Amount with a length of at least 1 decimal.");
+                throw new InvalidDataException(_rm.GetString("endUnexpectedlyAmount", _cultureInfo));
             }
 
             if (!decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("de"), out var amount))
             {
-                throw new FormatException($"Cannot convert value to Decimal: {value}");
+                throw new FormatException($"{_rm.GetString("noDecimal", _cultureInfo)} {value}");
             }
 
             balance.Amount = amount;

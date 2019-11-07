@@ -39,12 +39,30 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AdditionalInfoParserResx.resx</DependentUpon>
     </Compile>
+    <Compile Update="Parsing\BalanceParserResx.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BalanceParserResx.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Parsing\DateParserResx.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DateParserResx.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Parsing\AdditionalInfoParserResx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AdditionalInfoParserResx.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Parsing\BalanceParserResx.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BalanceParserResx.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Parsing\DateParserResx.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DateParserResx.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
